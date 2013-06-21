@@ -14,3 +14,5 @@ end
 gem 'jquery-rails'
 gem 'underscore-rails'
 
+gem 'binding_of_caller'
+gem 'better_errors'
