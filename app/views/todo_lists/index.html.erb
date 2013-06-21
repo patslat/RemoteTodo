@@ -30,16 +30,39 @@
   var templateFn = _.template(templateCode);
   var renderedTemplateContent = templateFn({ todoLists: TODOS });
 
-  // fill div with anchors
+  // fill div with anchors and delete buttons
   $("#list_container").html(renderedTemplateContent);
+
+  // listen to delete buttons
+  $(".delete_list").on("ajax:success", function(event, data) {
+
+    // remove from global bootstrapped data
+    var finder = function(listObj) {
+      return String(listObj.id) === String(event.target.id)
+    }
+    var listObj = _.find(TODOS, finder);
+    var index = _.indexOf(TODOS, listObj);
+    TODOS.splice(index, 1);
+
+
+    $(this).parent().remove(); // wtfs goin on
+  })
 
   // listen for clicks
   $(document).ready( function() {
     $("a").click(function(event) {
       if ($(this).attr("class") === "off") {
+        // toggle class to make items visible or invisible
         $(this).toggleClass("off");
 
-        var todoItems = TODOS[event.target.id - 1].todo_items;
+        // find list Object
+        var finder = function(listObj) {
+          return String(listObj.id) === String(event.target.id)
+        }
+        var listObj = _.find(TODOS, finder);
+
+        // get its items
+        var todoItems = listObj.todo_items;
         var templateCode = $("#todo_items").html();
 
         var templateFn = _.template(templateCode);
@@ -59,8 +82,13 @@
 
         // once form is appended, listen for a successful submit
         $(".new_item_form").on("ajax:success", function(event, data) {
-          // event.target.id - 1 refers to the list which the item belongs to
-          TODOS[event.target.id - 1].todo_items.push(data);
+
+          // find list Object and add items to it
+          var finder = function(listObj) {
+            return String(listObj.id) === String(event.target.id)
+          }
+          var listObj = _.find(TODOS, finder)
+          listObj.todo_items.push(data);
 
           // clear the field
           $(this).find("#item_body").val('');
@@ -71,14 +99,14 @@
           var templateFn = _.template(templateCode);
           var renderedTemplateContent = templateFn({ todoItems: [data] });
 
-          console.log($(this))
           $(this).parent().find("ul").append(renderedTemplateContent)
         })
 
       }
       else {
+        // toggle off to make items visible or not
         $(this).parent().find("ul").remove();
-        $(this).parent().find("form").remove();
+        $(this).parent().find(".new_item_form").remove();
         $(this).toggleClass("off");
       }
 

@@ -1,12 +1,20 @@
 <script type="text/template" id="todo_list">
-<% var anchor = "" %>
+<% var list = "" %>
 <% for (var i = 0; i < todoLists.length; i++) { %>
-<% anchor = anchor + "<div>" %>
-<% anchor = anchor + '<a href="#" class="off" id="' %>
-<% anchor = anchor + String(todoLists[i].id) + '">' +
-            todoLists[i].title + "</a>"; %>
-<% anchor = anchor + "</div>" %>
+<% var id = String(todoLists[i].id) %>
+
+<% list = list + '<div id="' + id + '">'; %>
+<% list = list + '<a href="#" class="off" id="' + id + '">'; %>
+<% list = list + todoLists[i].title + "</a>"; %>
+
+<% list = list + '<form action="/todo_lists/' + id + '"'; %>
+<% list = list + 'method="post" class="delete_list" id="' + id + '"'; %>
+<% list = list + 'data-remote="true">' %>
+<% list = list + '<input type="hidden" name="_method" value="delete">'; %>
+<% list = list + '<input type="submit" value="Delete This List">'; %>
+<% list = list + '</form>'; %>
+<% list = list + '</div>'; %>
 <% } %>
 
-<%= anchor %>
+<%= list %>
 </script>

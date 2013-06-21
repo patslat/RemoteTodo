@@ -1,7 +1,10 @@
 <script type="text/template" id="todo_item_form">
 <% var form = '<form action="/todo_lists/' + String(todoListId); %>
-<% form = form + '/todo_items" method="post" data-remote="true"'; %>
+<% form = form + '/todo_items.json" method="post" data-remote="true"'; %>
 <% form = form + 'class="new_item_form" id="' + String(todoListId) + '">'; %>
+
+<% form = form + '<input type="hidden" name="authenticity_token"' %>
+<% form = form + 'value="form_authenticity_token">' %>
 
 <% form = form + '<label for="item_body">Add New Item</label>'; %>
 <% form = form + '<input type="text" name="todo_item[body]" id="item_body">'; %>

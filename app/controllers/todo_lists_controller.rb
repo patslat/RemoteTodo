@@ -12,4 +12,13 @@ class TodoListsController < ApplicationController
       format.json { render :json => @list }
     end
   end
+
+  def destroy
+    @list = TodoList.find(params[:id])
+    @list.destroy
+
+    respond_to do |format|
+      format.json { render :json => true }
+    end
+  end
 end
