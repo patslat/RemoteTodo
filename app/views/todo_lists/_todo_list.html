@@ -1,0 +1,12 @@
+<script type="text/template" id="todo_list">
+<% var anchor = "" %>
+<% for (var i = 0; i < todoLists.length; i++) { %>
+<% anchor = anchor + "<div>" %>
+<% anchor = anchor + '<a href="#" class="off" id="' %>
+<% anchor = anchor + String(todoLists[i].id) + '">' +
+            todoLists[i].title + "</a>"; %>
+<% anchor = anchor + "</div>" %>
+<% } %>
+
+<%= anchor %>
+</script>

@@ -1,0 +1,13 @@
+<script type="text/template" id="todo_item_form">
+<% var form = '<form action="/todo_lists/' + String(todoListId); %>
+<% form = form + '/todo_items" method="post" data-remote="true"'; %>
+<% form = form + 'class="new_item_form" id="' + String(todoListId) + '">'; %>
+
+<% form = form + '<label for="item_body">Add New Item</label>'; %>
+<% form = form + '<input type="text" name="todo_item[body]" id="item_body">'; %>
+
+<% form = form + '<input type="submit" value="Add This Item">'; %>
+<% form = form + '</form>'; %>
+
+<%= form %>
+</script>

@@ -1,3 +1,101 @@
-<script type="text/javascript" id="todo_items">
-  <%= TODO_ITEMS = TodoItem.all.to_json.html_safe %>
+<div id="list_container">
+  <!-- stuff goes here yo -->
+</div>
+<br>
+
+<div>
+<%= form_for(@list,
+             remote: true,
+             class: "list_form") do |f| %>
+
+<%= f.label :title, "Create New List: " %>
+<%= f.text_field :title %>
+
+<%= f.submit "Create List" %>
+<% end %>
+</div>
+
+<script type="app/json" id="todo_lists">
+<%= @todos.to_json(:include => :todo_items).html_safe %>
+</script>
+
+<%= File.read("./app/views/todo_lists/_todo_list.html").html_safe %>
+<%= File.read("./app/views/todo_lists/_todo_item.html").html_safe %>
+<%= File.read("./app/views/todo_lists/_todo_item_form.html").html_safe %>
+
+<script type="text/javascript">
+  var TODOS = JSON.parse($("#todo_lists").html());
+  var templateCode = $("#todo_list").html();
+
+  var templateFn = _.template(templateCode);
+  var renderedTemplateContent = templateFn({ todoLists: TODOS });
+
+  // fill div with anchors
+  $("#list_container").html(renderedTemplateContent);
+
+  // listen for clicks
+  $(document).ready( function() {
+    $("a").click(function(event) {
+      if ($(this).attr("class") === "off") {
+        $(this).toggleClass("off");
+
+        var todoItems = TODOS[event.target.id - 1].todo_items;
+        var templateCode = $("#todo_items").html();
+
+        var templateFn = _.template(templateCode);
+        var renderedTemplateContent = templateFn({ todoItems: todoItems });
+
+        $(this).parent().append($("<ul>").html(renderedTemplateContent));
+
+        // build form for items and append that too
+
+        var todoListId = event.target.id;
+        templateCode = $("#todo_item_form").html();
+
+        templateFn = _.template(templateCode);
+        renderedTemplateContent = templateFn({ todoListId: todoListId });
+
+        $(this).parent().append(renderedTemplateContent);
+
+        // once form is appended, listen for a successful submit
+        $(".new_item_form").on("ajax:success", function(event, data) {
+          // event.target.id - 1 refers to the list which the item belongs to
+          TODOS[event.target.id - 1].todo_items.push(data);
+
+          // clear the field
+          $(this).find("#item_body").val('');
+
+          // append the newest object to the list
+          var templateCode = $("#todo_items").html();
+
+          var templateFn = _.template(templateCode);
+          var renderedTemplateContent = templateFn({ todoItems: [data] });
+
+          console.log($(this))
+          $(this).parent().find("ul").append(renderedTemplateContent)
+        })
+
+      }
+      else {
+        $(this).parent().find("ul").remove();
+        $(this).parent().find("form").remove();
+        $(this).toggleClass("off");
+      }
+
+    });
+
+    $("form").on("ajax:success", function(event, data) {
+      TODOS.push(data);
+      $(this).find("#todo_list_title").val('')
+
+      var templateCode = $("#todo_list").html();
+
+      var templateFn = _.template(templateCode);
+      var renderedTemplateContent = templateFn({ todoLists: [data] });
+
+      $("#list_container").append(renderedTemplateContent);
+    })
+
+  });
+
 </script>

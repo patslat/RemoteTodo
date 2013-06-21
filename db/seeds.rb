@@ -1,7 +1,25 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+TodoList.create(title: "Things to do")
+TodoItem.create(body: "Feed the hamster", completion: false, todo_list_id: 1)
+TodoItem.create(body: "Cure cancer", completion: false, todo_list_id: 1)
+TodoItem.create(body: "Read all the books", completion: false, todo_list_id: 1)
+TodoItem.create(body: "Get money", completion: false, todo_list_id: 1)
+TodoItem.create(body: "Save the world", completion: false, todo_list_id: 1)
+TodoItem.create(body: "Be a gangsta", completion: false, todo_list_id: 1)
+
+TodoList.create(title: "Stuff to read")
+TodoItem.create(body: "Effective JavaScript", completion: false, todo_list_id: 2)
+TodoItem.create(body: "Eloquent JavaScript", completion: false, todo_list_id: 2)
+TodoItem.create(body: "Energetic JavaScript", completion: false, todo_list_id: 2)
+TodoItem.create(body: "Empathetic JavaScript", completion: false, todo_list_id: 2)
+
+TodoList.create(title: "People to see")
+TodoItem.create(body: "Noam Chompsky", completion: false, todo_list_id: 3)
+TodoItem.create(body: "Socrates", completion: false, todo_list_id: 3)
+TodoItem.create(body: "Plato", completion: false, todo_list_id: 3)
+TodoItem.create(body: "Linus Trovalds", completion: false, todo_list_id: 3)
+
+TodoList.create(title: "Places to go")
+TodoItem.create(body: "North Korea", completion: false, todo_list_id: 4)
+TodoItem.create(body: "Antarctica", completion: false, todo_list_id: 4)
+TodoItem.create(body: "Canada", completion: false, todo_list_id: 4)
+TodoItem.create(body: "The Moon", completion: false, todo_list_id: 4)

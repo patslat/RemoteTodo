@@ -1,0 +1,10 @@
+<script type="text/template" id="todo_items">
+  <% var items = "" %>
+  <% for (var i = 0; i < todoItems.length; i++) { %>
+    <% items = items + "<li>" %>
+    <% items = items + todoItems[i].body %>
+    <% items = items + "</li>" %>
+  <% } %>
+
+  <%= items %>
+</script>
