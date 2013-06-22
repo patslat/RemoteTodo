@@ -3,7 +3,7 @@
 </div>
 <br>
 
-<div>
+<div id="new_todo_list">
 <%= form_for(@list,
              remote: true,
              class: "list_form") do |f| %>
@@ -34,7 +34,7 @@
   $("#list_container").html(renderedTemplateContent);
 
   // listen to delete buttons
-  $(".delete_list").on("ajax:success", function(event, data) {
+  $("#list_container").on("ajax:success", ".delete_list", function(event, data) {
 
     // remove from global bootstrapped data
     var finder = function(listObj) {
@@ -48,8 +48,67 @@
 
   // listen for clicks
   $(document).ready( function() {
-    $("#list_container").find("a").click(function(event) {
 
+    // listen for delete calls on the UL just added
+    $("#list_container").on("ajax:succes",
+                            "form.delete_items",
+                            function(event, list) {
+      // remove from global bootstrapped data
+      var finder = function(listObj) {
+        return String(listObj.id) === String(list.id)
+      }
+      var listObj = _.find(TODOS, finder);
+
+      finder = function(listObj) {
+        return String(listObj.id) === String(event.target.id)
+      }
+
+      console.log(listObj)
+      var item = _.find(listObj.todo_items, finder)
+      console.log(item)
+      var itemIdx = _.indexOf(listObj.todo_items, item)
+      listObj.todo_items.splice(itemIdx, 1)
+
+      $(this).parent().remove();
+    })
+
+    // once form is appended, listen for a successful submit
+    $("#list_container").on("ajax:success", ".new_item_form", function(event, data) {
+
+      // find list Object and add items to it
+      var finder = function(listObj) {
+        return String(listObj.id) === String(event.target.id)
+      }
+      var listObj = _.find(TODOS, finder)
+      listObj.todo_items.push(data);
+
+      // clear the field
+      $(this).find("#item_body").val('');
+
+      // append the newest object to the list
+      var templateCode = $("#todo_items").html();
+
+      var templateFn = _.template(templateCode);
+      var renderedTemplateContent = templateFn({ todoItems: [data] });
+
+      $(this).parent().find("ul").append(renderedTemplateContent)
+    })
+
+    $("#new_todo_list").on("ajax:success", ".new_todo_list", function(event, data) {
+      TODOS.push(data);
+      $(this).find("#todo_list_title").val('')
+
+      var templateCode = $("#todo_list").html();
+
+      var templateFn = _.template(templateCode);
+      var renderedTemplateContent = templateFn({ todoLists: [data] });
+
+      $("#list_container").append(renderedTemplateContent);
+    });
+
+    $("#list_container").on('click', 'a', function(event) {
+      console.log("CLIIICK")
+      console.log($(this))
       if ($(this).attr("class") === "off") {
 
         // toggle class to make items visible or invisible
@@ -61,7 +120,8 @@
         }
         var listObj = _.find(TODOS, finder);
 
-        // get its items
+        // get its items PROBLEM IS HERE!
+
         var todoItems = listObj.todo_items;
         var templateCode = $("#todo_items").html();
 
@@ -69,32 +129,6 @@
         var renderedTemplateContent = templateFn({ todoItems: todoItems });
 
         $(this).parent().append($("<ul>").html(renderedTemplateContent));
-
-        // listen for delete calls on the UL just added
-        console.log($(this).parent().find("form.delete_items"))
-        $(this).parent().find("form.delete_items").on("ajax:success",
-                                                      function(event, list) {
-          // remove from global bootstrapped data
-          console.log("heard a delete request!")
-          console.log(event.target.id)
-          console.log(list.id)
-          var finder = function(listObj) {
-            return String(listObj.id) === String(list.id)
-          }
-          var listObj = _.find(TODOS, finder);
-
-          finder = function(listObj) {
-            return String(listObj.id) === String(event.target.id)
-          }
-
-          console.log(listObj)
-          var item = _.find(listObj.todo_items, finder)
-          console.log(item)
-          var itemIdx = _.indexOf(listObj.todo_items, item)
-          listObj.todo_items.splice(itemIdx, 1)
-
-          $(this).parent().remove();
-        })
 
         // build form for items and append that too
         var todoListId = event.target.id;
@@ -104,53 +138,6 @@
         renderedTemplateContent = templateFn({ todoListId: todoListId });
 
         $(this).parent().append(renderedTemplateContent);
-
-        // once form is appended, listen for a successful submit
-        $(".new_item_form").on("ajax:success", function(event, data) {
-
-          // find list Object and add items to it
-          var finder = function(listObj) {
-            return String(listObj.id) === String(event.target.id)
-          }
-          var listObj = _.find(TODOS, finder)
-          listObj.todo_items.push(data);
-
-          // clear the field
-          $(this).find("#item_body").val('');
-
-          // append the newest object to the list
-          var templateCode = $("#todo_items").html();
-
-          var templateFn = _.template(templateCode);
-          var renderedTemplateContent = templateFn({ todoItems: [data] });
-
-          $(this).parent().find("ul").append(renderedTemplateContent)
-          console.log($(this).parent().find("form.delete_items"))
-          $(this).parent().find("form.delete_items").on("ajax:success",
-                                                        function(event, list) {
-            // THIS IS HACKY AND BAD AND YOU SHOULD FEEL BAD
-            console.log("heard a delete request!")
-            console.log(event.target.id)
-            console.log(list.id)
-            var finder = function(listObj) {
-              return String(listObj.id) === String(list.id)
-            }
-            var listObj = _.find(TODOS, finder);
-
-            finder = function(listObj) {
-              return String(listObj.id) === String(event.target.id)
-            }
-
-            console.log(listObj)
-            var item = _.find(listObj.todo_items, finder)
-            console.log(item)
-            var itemIdx = _.indexOf(listObj.todo_items, item)
-            listObj.todo_items.splice(itemIdx, 1)
-
-            $(this).parent().remove();
-          })
-        })
-
       }
       else {
         // toggle off to make items visible or not
@@ -161,17 +148,6 @@
 
     });
 
-    $(".new_todo_list").on("ajax:success", function(event, data) {
-      TODOS.push(data);
-      $(this).find("#todo_list_title").val('')
-
-      var templateCode = $("#todo_list").html();
-
-      var templateFn = _.template(templateCode);
-      var renderedTemplateContent = templateFn({ todoLists: [data] });
-
-      $("#list_container").append(renderedTemplateContent);
-    });
   });
 
 </script>
