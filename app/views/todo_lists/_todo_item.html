@@ -1,8 +1,23 @@
 <script type="text/template" id="todo_items">
   <% var items = "" %>
+  <% var listId = todoItems.length === 0 ? 0 : String(todoItems[0].todo_list_id) %>
+
   <% for (var i = 0; i < todoItems.length; i++) { %>
+    <% var itemId = todoItems[i].id %>
+
     <% items = items + "<li>" %>
     <% items = items + todoItems[i].body %>
+
+    <% items = items + '<form action="/todo_lists/' + listId; %>
+    <% items = items + '/todo_items/' + itemId + '.json"'; %>
+    <% items = items + 'method="post" class="delete_items" id="'; %>
+    <% items = items + itemId + '"'; %>
+    <% items = items + 'data-remote="true">' %>
+    <% items = items + '<input type="hidden" name="_method" value="delete">'; %>
+    <% items = items + '<input type="submit" value="Delete This Item">'; %>
+    <% items = items + '</form>'; %>
+    <% items = items + '</div>'; %>
+
     <% items = items + "</li>" %>
   <% } %>
 

@@ -9,4 +9,14 @@ class TodoItemsController < ApplicationController
     end
   end
 
+  def destroy
+    @item = TodoItem.find(params[:id])
+    @list = TodoList.find(params[:todo_list_id])
+    @item.delete
+
+    respond_to do |format|
+      format.json { render :json => @list }
+    end
+  end
+
 end
