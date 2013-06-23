@@ -96,6 +96,8 @@
 
     $("#new_todo_list").on("ajax:success", ".new_todo_list", function(event, data) {
       TODOS.push(data);
+      console.log("this is what is being pushed")
+      console.log(data)
       $(this).find("#todo_list_title").val('')
 
       var templateCode = $("#todo_list").html();

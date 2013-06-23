@@ -9,7 +9,7 @@ class TodoListsController < ApplicationController
     @list.save
 
     respond_to do |format|
-      format.json { render :json => @list }
+      format.json { render :json => @list.to_json(:include => :todo_items) }
     end
   end
 
